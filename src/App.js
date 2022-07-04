@@ -1,45 +1,26 @@
 import React from "react";
-import { useForm } from "react-hook-form";
-import "./styles.css";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./Login";
+import Register from "./Register";
+import Home from "./Home";
+import ChatBody from "./components/ChatBody";
+import Nav from "./components/nav/Nav";
+import Header from "./headfoot/Header";
+import './App.css';
 export default function App() {
-  
- 
-  
-  const { register, handleSubmit, formState: { errors }} = useForm();
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
   return (
-    <>
-    <p className="title">Registration Form</p>
-    <div className="App">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-control">
-
-          <label>firstName</label>
-          <input {...register("firstName", { required: true })} />
-           {errors.firstName?.type === 'required' && "First name is required"}
-           </div>
-        <div className="form-control">
-          <label>LastName</label>
-          <input {...register("lastName", { required: true })} />
-           {errors.lastName?.type === 'required' && "last name is required"}
-        </div>
-        <div className="form-control">
-          <label>Email</label>
-          <input {...register("Email", { required: true })} />
-           {errors.Email?.type === 'required' && "Email is required"}
-        </div>
-
-        <div className="form-control">
-          <label></label>
-          <button type="submit">Login</button>
-        </div>
-      </form>
-    </div>
-    </>
+  
+    <BrowserRouter>
+      <Routes>
+        
+        <Route path="/Register" element={<Register />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Home" element={<Home />} />
+        <Route path="/ChatBody" element={<ChatBody />} />
+        <Route path="/Nav" element={<Nav />} />
+        <Route path="/Header" element={<Header />} />
+        
+      </Routes>
+    </BrowserRouter>   
   );
 }

@@ -1,8 +1,44 @@
 body {
   height: 100vh;
+  width: 100vw;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  /* justify-content: center; */
+  gap: 1rem;
+  /* align-items: center; */
+ 
+}
+input {
+  background-color: transparent;
+  padding: 1rem;
+  border: 0.1rem solid #4e0eff;
+  border-radius: 0.4rem;
+  color: white;
+  width: 100%;
+  font-size: 1rem; 
+  }
+  button {
+    background-color: #4e0eff;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    
+  }
+h1 {
+  color: black;
+  text-transform: uppercase;
+}
+.brand {
+  display: flex;
   align-items: center;
+  gap: 1rem;
+  justify-content: center;
+  
 }
 .title {
   text-align: center;
@@ -34,6 +70,31 @@ body {
     padding-right: 20px;
     margin-bottom: 5px;
   }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: grey;
+    border-radius: 2rem;
+    padding: 3rem 5rem;
+  }
+  span {
+    color: white;
+    text-transform: uppercase;
+    
+  }
+  button {
+    background-color: #4e0eff;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    
+  }
   
   .form-control input[type='text'],
   .form-control input[type='password'] {
@@ -41,10 +102,7 @@ body {
     padding: 5px;
   }
   
-  button {
-    max-width: 150px;
-    padding: 5px 10px;
-  }
+  
   
   @media screen and (max-width: 600px) {
     body {
@@ -53,6 +111,7 @@ body {
   
     .errorMsg {
       max-width: 100%;
+      color: #f21e08;
     }
   
     .form-control {
