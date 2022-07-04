@@ -1,9 +1,11 @@
 import React, { Component, useState, createRef, useEffect, useRef } from "react";
+import { axiosInstance } from "../axiosInstance";
 
 import "./chatContent.css";
 import Avatar from "./chatList/Avatar";
 import ChatItem from "./ChatItem";
-const chatItms = [
+import { socket } from "../UR";
+/*const chatItms = [
   {
     key: 1,
     image:
@@ -53,13 +55,13 @@ const chatItms = [
     type: "other",
     msg: "I'm taliking about the tutorial",
   },
-];
+];*/
 
 const ChatContent = ({selectedChat}) => {
   const messagesEndRef = useRef(null);
   const [msg, setMSg] = useState('');
   const [chat, setchat] = useState([]);
-
+  
   const scrollToBottom = () => {
     setTimeout(() => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -68,8 +70,10 @@ const ChatContent = ({selectedChat}) => {
 
   useEffect(() => {
     if (selectedChat) {
-    setchat(chatItms)
-    scrollToBottom();
+      axiosInstance.get("/api/getMessage/" + selectedChat).then((response)=>{
+        setchat(response.data)
+        scrollToBottom();
+      });
     }
   }, [selectedChat])
 
@@ -92,9 +96,41 @@ const ChatContent = ({selectedChat}) => {
   //   });
   //   this.scrollToBottom();
   // }
-  const onStateChange = (e) => {
-    setMSg(e.target.value);
+  const onStateChange = () => {
+    if (msg) {
+    const messageData = {
+      room: selectedChat,
+      author: localStorage.getItem('userid'),
+      message: msg,
+      time:
+        new Date(Date.now()).getHours() +
+        ":" +
+        new Date(Date.now()).getMinutes(),
+    };
+    
+    socket.emit("send_message", messageData);
+    const data = [...chat];
+    data.push({
+      messageGroupId: selectedChat,
+      message: msg,
+      way: messageData.author,
+      createdAt: new Date()
+    })
+    setchat(data);
+    scrollToBottom();
+    setMSg('');
+  }
+    
+    /*axiosInstance.fetch("/api/message",setMSg).then((response)=>{
+      console.log(response.status);
+      console.log(response.data.token);
+      
+    });*/
   };
+  
+  
+  
+
 
     return (
       <div className="main__chatcontent">
@@ -123,9 +159,9 @@ const ChatContent = ({selectedChat}) => {
               return (
                 <ChatItem
                   animationDelay={index + 2}
-                  key={itm.key}
-                  user={itm.type ? itm.type : "me"}
-                  msg={itm.msg}
+                  key={itm.id}
+                  user={itm.way == localStorage.getItem('userid') ? 'me' : itm.type}
+                  msg={itm.message}
                   image={itm.image}
                 />
               );
@@ -141,10 +177,9 @@ const ChatContent = ({selectedChat}) => {
             <input
               type="text"
               placeholder="Type a message here"
-              onChange={onStateChange}
-              defaultValue={msg}
+              onChange={(e) =>  setMSg(e.target.value)}
             />
-            <button className="btnSendMsg" id="sendMsgBtn">
+            <button className="btnSendMsg" id="sendMsgBtn" onClick={onStateChange}>
               <i className="fa fa-paper-plane"></i>
             </button>
           </div>

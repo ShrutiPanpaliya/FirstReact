@@ -1,7 +1,17 @@
 const express = require('express')
 const app = express();
-const bcrypt = require('bcrypt');
 const mysql = require('mysql');
+const cors = require('cors');
+const {Server}=require("socket.io");
+const http = require("http");
+const server=http.createServer(app);
+const io = new Server(server,{
+    cors:{
+        origin:"*",
+
+    }
+});
+app.use(cors())
 
 const con = mysql.createConnection({
     connectionLimit:100,
@@ -25,11 +35,12 @@ con.connect(function(err)
 app.use(express.json())
 app.post('/api/register',(req,res)=>
 {
-    const user = req.body.user;
+    const user = req.body.userName;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const pass = req.body.password;
     const gender = req.body.gender;
+    const profilePic = req.body.profilePic;
     var gen;
             sqlSearch1="select * from tblUser where userName = '" + user + "'"
             con.query(sqlSearch1,function(err,result)
@@ -40,7 +51,6 @@ app.post('/api/register',(req,res)=>
                 }
                 else
                 {
-                    console.log(result.length);
                     if(result.length!=0)
                     {
                         res.send("User already exists");
@@ -55,8 +65,8 @@ app.post('/api/register',(req,res)=>
                         {
                             gen =1;
                         }
-                        sqlInsert1 = "insert into tblUser (userName,firstName,lastName,password,gender) values (?,?,?,?,?) "
-                        con.query(sqlInsert1,[user,firstName,lastName,pass,gen],function(err,result)
+                        sqlInsert1 = "insert into tblUser (userName,firstName,lastName,password,gender,profilePic) values (?,?,?,?,?,?) "
+                        con.query(sqlInsert1,[user,firstName,lastName,pass,gen,profilePic],function(err,result)
                         {
                             if(err)
                             {
@@ -75,9 +85,9 @@ app.post('/api/register',(req,res)=>
 })
 app.post('/api/login',(req,res)=>
 {
-    const user = req.body.user;
+    const user = req.body.userName;
     const pass = req.body.password;
-    sqlSearch2="select * from tblUser where userName = ? and password=?"
+    sqlSearch2="select id from tblUser where userName = ? and password=?"
     con.query(sqlSearch2,[user,pass],function(err,result)
     {
         if(err)
@@ -86,10 +96,9 @@ app.post('/api/login',(req,res)=>
         }
         else
         {
-            console.log(result.length);
-            if(result.length!=0)
-            {
-                res.send("Welcome");
+            if(result.length)
+            {   
+                res.send(result[0])
             }
             else
             {
@@ -98,7 +107,29 @@ app.post('/api/login',(req,res)=>
         }
     });
 })
-app.get('/api/login/:id',(req,res)=>
+app.get('/api/user',(req,res)=>
+{
+    const user = req.body.userName;
+    const pass = req.body.password;
+    sqlSearch4="Select id,userName,password from tblUser where userName='"+user+"'and password='"+pass+"'"
+    con.query(sqlSearch4,function(err,result){
+        if(err)
+        {
+            console.log("1st error in getUserDetails",err);
+        }
+        else
+        {
+            if(result.length!=0)
+            {
+                res.send(result);
+            }
+            else{
+                res.send("Invalid user")
+            }
+        }
+    })
+})
+app.get('/api/userInfo/:id',(req,res)=>
 {
     const id = req.params['id'];
     const user = req.body.user;
@@ -236,11 +267,11 @@ app.post('/api/postMessage/:id',(req,res)=>
     })
                        
 })
-app.get('/api/getMessageList',(req,res)=>
+app.get('/api/getMessageList/:id',(req,res)=>
 {
-    const id = req.body.id;
-    sqlSearch3 = "SELECT tblMessage.id as userId,tblMessage.messageGroupId as GroupID,message FROM tblMessage where id = '"+id+"'";
-    con.query(sqlSearch3,function(err,result)
+    const id = req.params.id;
+    sqlSearch31 =  `SELECT tg.id, tg.name, tg.profilePic, tg.updateAt, tg.createdAt, tg.isActive, tg.isDelete FROM tblgroupmember as tm INNER JOIN tblgroup as tg on tg.id = tm.groupId where userId = ${id} and tg.isActive = 1 && tg.isDelete = 0 and tm.isActive = 1 and tm.isDelete = 0`;
+    con.query(sqlSearch31,function(err,result)
     {
         if(err)
         {
@@ -261,8 +292,7 @@ app.get('/api/getMessageList',(req,res)=>
 app.get('/api/getMessage/:id',(req,res)=>
 {
     const id = req.params['id'];
-    const groupid = req.body.groupid;
-    sqlSearch3 = "SELECT tblMessage.message as Message FROM tblMessage where id = '"+id+"'";
+    sqlSearch3 = "SELECT * FROM tblMessage where messageGroupId = '"+id+"'";
     con.query(sqlSearch3,function(err,result)
     {
         if(err)
@@ -383,7 +413,38 @@ app.get('/api/getGroupDetail/:id',(req,res)=>
         }
     });
 })
-var server = app.listen(8080,function(){
+
+io.on("connection", (socket) => {
+    console.log(`User Connected: ${socket.id}`);
+    
+    
+  
+    /*socket.on("join_room", (data) => {
+      socket.join(data);
+    });*/
+    socket.on("join_room", (data) => {
+        socket.join(data);
+        console.log(`User with ID: ${socket.id} joined room: ${data}`);
+      });
+  
+    socket.on("send_message", (payload) => {
+      socket.to(payload.room).emit("receive_message", payload);
+      const data = {
+        message: payload.message,
+        messageGroupId: payload.room,
+        way: payload.author,
+        type: 'text'
+      }
+
+      sqlInsert3 = "insert into tblMessage (messageGroupId,message,way,type) values  (?,?,?,?)";
+        con.query(sqlInsert3,[data.messageGroupId,data.message,data.way,data.type],function(err,result) {})
+    });
+    socket.on('disconnect', ()=> {
+        console.log("User Disconnected", socket.id);
+    });
+  });
+
+server.listen(8080,function(){
     var host = server.address().address
     var port = server.address().port
     console.log("http://%s:%s",host,port)

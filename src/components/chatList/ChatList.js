@@ -1,4 +1,7 @@
 import React, { Component, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../../axiosInstance";
+import { socket } from "../../UR";
 import "./chatList.css";
 import ChatListItems from "./ChatListItems";
 
@@ -50,7 +53,7 @@ const allList = [
     name: "Kayley Mellor",
     active: false,
     isOnline: true,
-  },
+  }/*,
   {
     image:
       "https://www.paintingcontest.org/components/com_djclassifieds/assets/images/default_profile.png",
@@ -81,14 +84,22 @@ const allList = [
     name: "Manpreet David",
     active: false,
     isOnline: true,
-  },
+  },*/
 ]
 
 const ChatList = ({setSelectedChat}) => {
   const [allChatUsers, setAllChatUsers] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
-    setAllChatUsers(allList)
-  })
+    if (localStorage.getItem('userid')) {
+    axiosInstance.get("/api/getMessagelist/" + localStorage.getItem('userid')).then((response)=>{
+      setAllChatUsers(response.data)
+
+    });
+  } else {
+    navigate('/Login');
+  }
+  },[])
     return (
       <div className="main__chatlist">
         <button className="btn">
@@ -118,9 +129,10 @@ const ChatList = ({setSelectedChat}) => {
                 animationDelay={index + 1}
                 active={item.active ? "active" : ""}
                 isOnline={item.isOnline ? "active" : ""}
-                image={item.image}
+                image={item.profilePic}
                 selectChat={() => {
                   setSelectedChat(item.id)
+                  socket.emit("join_room", item.id);
                 }}
               />
             );
