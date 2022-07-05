@@ -18,13 +18,6 @@ export default function Login() {
   const onSubmit = (data) => {
     handleSubmit1(data);
   };
-  const handlechange=(e)=>
-  {
-    const value = e.target.value
-    setUser({
-      ...user,
-    })
-  }
   const handleSubmit1 = (e) => 
   {
     const userData=

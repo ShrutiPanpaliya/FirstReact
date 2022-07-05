@@ -279,12 +279,12 @@ app.get('/api/getMessageList/:id',(req,res)=>
         }
         else
         {
-            if(result.length!=0)
+            if(result.length)
             {
                 res.send(result);
             }
             else{
-                res.send("Invalid request")
+                res.send([]);
             }
         }
     });
@@ -327,7 +327,7 @@ app.post('/api/groupDetails',(req,res)=>
             console.log(result.length);
             if(result.length!=0)
             {
-                res.send("Group Created");
+                res.send(result.insertId.toString());
             }
         }
     });

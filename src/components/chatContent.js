@@ -1,66 +1,17 @@
-import React, { Component, useState, createRef, useEffect, useRef } from "react";
+import React, { useState, createRef, useEffect, useRef } from "react";
 import { axiosInstance } from "../axiosInstance";
 
 import "./chatContent.css";
 import Avatar from "./chatList/Avatar";
 import ChatItem from "./ChatItem";
 import { socket } from "../UR";
-/*const chatItms = [
-  {
-    key: 1,
-    image:
-      "https://pbs.twimg.com/profile_images/1116431270697766912/-NfnQHvh_400x400.jpg",
-    type: "",
-    msg: "Hii,Hope everything is well",
-  },
-  {
-    key: 2,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTA78Na63ws7B7EAWYgTr9BxhX_Z8oLa1nvOA&usqp=CAU",
-    type: "other",
-    msg: "yup,I am fine.",
-  },
-  {
-    key: 3,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTA78Na63ws7B7EAWYgTr9BxhX_Z8oLa1nvOA&usqp=CAU",
-    type: "other",
-    msg: "What about you?",
-  },
-  {
-    key: 4,
-    image:
-      "https://pbs.twimg.com/profile_images/1116431270697766912/-NfnQHvh_400x400.jpg",
-    type: "",
-    msg: "Awesome these days.",
-  },
-  {
-    key: 5,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTA78Na63ws7B7EAWYgTr9BxhX_Z8oLa1nvOA&usqp=CAU",
-    type: "other",
-    msg: "Finally. What's the plan?",
-  },
-  {
-    key: 6,
-    image:
-      "https://pbs.twimg.com/profile_images/1116431270697766912/-NfnQHvh_400x400.jpg",
-    type: "",
-    msg: "what plan mate?",
-  },
-  {
-    key: 7,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTA78Na63ws7B7EAWYgTr9BxhX_Z8oLa1nvOA&usqp=CAU",
-    type: "other",
-    msg: "I'm taliking about the tutorial",
-  },
-];*/
+
 
 const ChatContent = ({selectedChat}) => {
   const messagesEndRef = useRef(null);
   const [msg, setMSg] = useState('');
   const [chat, setchat] = useState([]);
+  
   
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -76,26 +27,13 @@ const ChatContent = ({selectedChat}) => {
       });
     }
   }, [selectedChat])
+useEffect(() => {
+    socket.off("receive_message").on("receive_message", (data) => {
 
-  // componentDidMount() {
-  //   window.addEventListener("keydown", (e) => {
-  //     if (e.keyCode == 13) {
-  //       if (this.state.msg != "") {
-  //         this.chatItms.push({
-  //           key: 1,
-  //           type: "",
-  //           msg: this.state.msg,
-  //           image:
-  //             "https://pbs.twimg.com/profile_images/1116431270697766912/-NfnQHvh_400x400.jpg",
-  //         });
-  //         this.setState({ chat: [...this.chatItms] });
-  //         this.scrollToBottom();
-  //         this.setState({ msg: "" });
-  //       }
-  //     }
-  //   });
-  //   this.scrollToBottom();
-  // }
+      setchat((list) => [...list, data]);
+    });
+  }, [socket]);
+
   const onStateChange = () => {
     if (msg) {
     const messageData = {
@@ -117,15 +55,10 @@ const ChatContent = ({selectedChat}) => {
       createdAt: new Date()
     })
     setchat(data);
+    <p></p>
     scrollToBottom();
     setMSg('');
   }
-    
-    /*axiosInstance.fetch("/api/message",setMSg).then((response)=>{
-      console.log(response.status);
-      console.log(response.data.token);
-      
-    });*/
   };
   
   
@@ -141,7 +74,7 @@ const ChatContent = ({selectedChat}) => {
                 isOnline="active"
                 image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTA78Na63ws7B7EAWYgTr9BxhX_Z8oLa1nvOA&usqp=CAU"
               />
-              <p>Tim Hover</p>
+              <p></p>
             </div>
           </div>
 
@@ -160,15 +93,17 @@ const ChatContent = ({selectedChat}) => {
                 <ChatItem
                   animationDelay={index + 2}
                   key={itm.id}
-                  user={itm.way == localStorage.getItem('userid') ? 'me' : itm.type}
+                  user={itm.way === localStorage.getItem('userid') ? 'me' : itm.type}
                   msg={itm.message}
                   image={itm.image}
+                  time={itm.Date}
                 />
               );
             })}
             <div ref={messagesEndRef} />
           </div>
         </div>
+      
         <div className="content__footer">
           <div className="sendNewMessage">
             <button className="addFiles">

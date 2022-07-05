@@ -3,6 +3,7 @@ import "./chatBody.css";
 import ChatList from "./chatList/ChatList";
 import ChatContent from "./chatContent";
 import UserProfile from "./userProfile/UserProfile";
+
   
    const ChatBody = () => {
     const [selectedChat, setSelectedChat] = useState(null)
@@ -11,6 +12,7 @@ import UserProfile from "./userProfile/UserProfile";
           <ChatList setSelectedChat={setSelectedChat}/>
           <ChatContent selectedChat={selectedChat}/>
           <UserProfile />
+          
         </div>
       );
     }
