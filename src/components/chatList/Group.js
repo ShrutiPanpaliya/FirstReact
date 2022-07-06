@@ -50,7 +50,7 @@ function Group() {
 
   return (
     <div className="App">
-      {allUsers.map((item, index) => {
+      {Users.map((item, index) => {
             return (
               <ChatListItems
                 name={item.name}
@@ -59,12 +59,7 @@ function Group() {
                 active={item.active ? "active" : ""}
                 isOnline={item.isOnline ? "active" : ""}
                 image={item.profilePic}
-                selectChat={() => {
-                  setSelectedChat(item.id)
-                 
-                  socket.emit("join_room", item.id);
-                }}
-              />
+                />
             );
           })}
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -73,9 +68,9 @@ function Group() {
           <label>Group Name</label>
           <input{...register("grpName",{require: true})}/>
           <div>
-          <Select options={ techCompanies } isMulti/>
+          <Select options={item.Users} isMulti/>
           </div>
-          <button type="Submit" onClick={onStateChange}>join  conversation</button>
+          <button type="Submit" >join  conversation</button>
         </div>
       </form>
     </div>
