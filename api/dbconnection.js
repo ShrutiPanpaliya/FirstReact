@@ -4,6 +4,7 @@ const mysql = require('mysql');
 const cors = require('cors');
 const {Server}=require("socket.io");
 const http = require("http");
+
 const server=http.createServer(app);
 const io = new Server(server,{
     cors:{
@@ -51,7 +52,7 @@ app.post('/api/register',(req,res)=>
                 }
                 else
                 {
-                    if(result.length!=0)
+                    if(result.length)
                     {
                         res.send("User already exists");
                     }
@@ -107,11 +108,35 @@ app.post('/api/login',(req,res)=>
         }
     });
 })
-app.get('/api/user',(req,res)=>
-{
+app.post('/api/mobile/login',(res,req)=>{
     const user = req.body.userName;
     const pass = req.body.password;
-    sqlSearch4="Select id,userName,password from tblUser where userName='"+user+"'and password='"+pass+"'"
+    sqlSearch2="select id from tblUser where userName = ? and password=?"
+    con.query(sqlSearch2,[user,pass],function(err,result)
+    {
+        if(err)
+        {
+            console.log("1st error:",err);
+        }
+        else
+        {
+            if(result.length)
+            {   
+                res.send(result[0].id)
+            }
+            else
+            {
+                res.send("Try again!");
+            }
+        }
+    });
+})
+app.get('/api/user/:id',(req,res)=>
+{
+    const id = req.params.id;
+    const user = req.body.userName;
+    const pass = req.body.password;
+    sqlSearch4=`Select userName,password from tblUser where id=${id}`;
     con.query(sqlSearch4,function(err,result){
         if(err)
         {
@@ -121,10 +146,32 @@ app.get('/api/user',(req,res)=>
         {
             if(result.length!=0)
             {
-                res.send(result);
+                res.send(result[0]);
             }
             else{
-                res.send("Invalid user")
+                res.send([])
+            }
+        }
+    })
+})
+app.get('/api/user',(req,res)=>
+{
+    sqlSearch9 = `select id,userName from tblUser`
+    con.query(sqlSearch9,function(err,result)
+    {
+        if(err)
+        {
+            console.log(err);
+        }
+        else
+        {
+            if(result.length)
+            {
+                res.send(result)
+            }
+            else
+            {
+                res.send([])
             }
         }
     })
@@ -142,9 +189,9 @@ app.get('/api/userInfo/:id',(req,res)=>
         }
         else
         {
-            if(result.length!=0)
+            if(result.length)
             {
-                res.send(result);
+                res.send(result[0]);
             }
             else{
                 res.send("Invalid user")
@@ -227,9 +274,9 @@ app.post('/api/message',(req,res)=>
         }
         else
         {
-            if(result.length!=0)
+            if(result.length)
             {
-                res.send('Already exists');
+                res.send([]);
             }
             else
             {
@@ -242,7 +289,7 @@ app.post('/api/message',(req,res)=>
                     }
                     else
                     {
-                        res.send('Created!!');
+                        res.send([]);
                     }
                 })
             }
@@ -284,7 +331,7 @@ app.get('/api/getMessageList/:id',(req,res)=>
                 res.send(result);
             }
             else{
-                res.send([]);
+                res.send([])
             }
         }
     });
@@ -306,13 +353,14 @@ app.get('/api/getMessage/:id',(req,res)=>
                 res.send(result);
             }
             else{
-                res.send("Invalid request")
+                res.send([])
             }
         }
     });
 })
-app.post('/api/groupDetails',(req,res)=>
+app.post('/api/groupDetails/:id',(req,res)=>
 {
+    const id = req.params.id;
     const grpName = req.body.grpName;
     const profilePic = req.body.profilePic;
     sqlInsert2="insert into tblGroup (name,profilePic) values (?,?) ";
@@ -324,12 +372,58 @@ app.post('/api/groupDetails',(req,res)=>
         }
         else
         {
-            console.log(result.length);
             if(result.length!=0)
             {
-                res.send(result.insertId.toString());
+                grpId = result.insertId;
+                console.log(grpId)
+                res.send(result.insertId.toString())    
+                sqlInsert4=`insert into tblGroupMember (groupId,userId) values (${grpId},${id})`
+                con.query(sqlInsert4,function(err,result)
+                {
+                    if(err)
+                    {
+                        console.log("1st error:",err);
+                    }
+                    else
+                    {
+                        if(result.length)
+                        {
+                            res.send(result);
+                        }
+                        else
+                        {
+                            res.send([])
+                        }
+                    }
+                }); 
+       
             }
         }
+    });
+})
+app.post('/api/addGroupMember/:id',(req,res)=>
+{
+    const grpid = req.params.id;
+    const userName = req.body.userName
+    sqlSearch8 = `SELECT groupId from tblgroupmember JOIN tbluser on tbluser.id = tblgroupmember.userId WHERE tbluser.userName='${userName}'`;
+    con.query(sqlSearch8,function(err,result)
+    {
+        
+        sqlInsert4=`insert into tblGroupMember (groupId,userId) values (${grpid},(select id from tblUser where userName='${userName}')) `;
+        con.query(sqlInsert4,function(err,result)
+        {
+            if(err)
+            {
+                console.log("1st error:",err);
+            }
+            else
+            {
+                if(result.length)
+                {
+                    res.send(result);
+                }
+            }
+        });
     });
 })
 app.get('/api/getGroupDetails/:id',(req,res)=>
@@ -344,9 +438,9 @@ app.get('/api/getGroupDetails/:id',(req,res)=>
         }
         else
         {
-            if(result.length!=0)
+            if(result.length)
             {
-                res.send(result);
+                res.send(result[0]);
             }
             else{
                 res.send("Invalid request")

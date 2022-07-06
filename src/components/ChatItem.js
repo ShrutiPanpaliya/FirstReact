@@ -13,11 +13,13 @@ export default class ChatItem extends Component {
         className={`chat__item ${this.props.user ? this.props.user : ""}`}
       >
          <div className="chat__item__content">
+          
           <div className="chat__msg">{this.props.msg}</div>
-          <p></p>
+          
+          
 
           <div className="chat__meta">
-            
+          
           <span></span>
             <span>Seen 1.03PM</span>
           </div>

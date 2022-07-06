@@ -73,7 +73,7 @@ useEffect(() => {
               <Avatar
                 isOnline="active"
                 image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTA78Na63ws7B7EAWYgTr9BxhX_Z8oLa1nvOA&usqp=CAU"
-              />
+              /><p>Shruti</p>
               <p></p>
             </div>
           </div>
