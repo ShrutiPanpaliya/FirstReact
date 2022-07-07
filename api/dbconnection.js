@@ -390,10 +390,7 @@ app.post('/api/groupDetails/:id',(req,res)=>
                         {
                             res.send(result);
                         }
-                        else
-                        {
-                            res.send([])
-                        }
+                        
                     }
                 }); 
        

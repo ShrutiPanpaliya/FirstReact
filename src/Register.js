@@ -20,12 +20,7 @@ export default function Register() {
     handleSubmit1(data);
     
   };
-  const handleChange=(e)=>{
-    const value = e.target.value
-    setUser({
-      ...user,
-    });
-  };
+  
   const handleSubmit1 = (e) => {
     const userData=
     {
@@ -36,10 +31,18 @@ export default function Register() {
       gender:e.gender
     };
     axiosInstance.post("/api/register",userData).then((response)=>{
+      if(!userName || !firstName || !lastName || !password || !gender   ){
+        return res.status(406).json({message:"Some fields are missing"}) ;
+        
+    }
+    else
+    {
       console.log(response.status);
       console.log(response.data);
       navigate('/Login');
+    }
     });
+  
   };
 
   return (
