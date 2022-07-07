@@ -11,12 +11,15 @@ function Group() {
     
     useEffect(() => {
       {
-      axiosInstance.get("api/user").then((response)=>{
-        setAllUsers(response.data)
-  
-      });
-    }  
+        if (localStorage.getItem('userid')) 
+        {
+          axiosInstance.get("/api/getuser/" + localStorage.getItem('userid')).then((response)=>{
+            setAllUsers(response.data)
+          });
+        }  
+      }
     },[])
+
     const techCompanies = [
       { label: "Apple", value: 1 },
       { label: "Facebook", value: 2 },
@@ -43,7 +46,7 @@ function Group() {
         axiosInstance.post('/api/groupDetails/'+localStorage.userid,userData).then((response)=>{
         if(response?.data){
           console.log(response.status);
-          localStorage.setItem('grpid', response.data.id);
+          localStorage.setItem('grpid', response.data);
           navigate('/ChatBody');
           }
         });

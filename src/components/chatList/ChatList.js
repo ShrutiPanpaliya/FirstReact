@@ -12,10 +12,6 @@ const ChatList = ({setSelectedChat}) => {
     
     navigate('../Group');
   }
- 
-
-  
-
   useEffect(() => {
     if (localStorage.getItem('userid')) {
     axiosInstance.get("/api/getMessagelist/" + localStorage.getItem('userid')).then((response)=>{
@@ -58,7 +54,7 @@ const ChatList = ({setSelectedChat}) => {
                 image={item.profilePic}
                 selectChat={() => {
                   setSelectedChat(item.id)
-                 
+                 localStorage.setItem('groupName', item.name);
                   socket.emit("join_room", item.id);
                 }}
               />

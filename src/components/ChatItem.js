@@ -3,6 +3,17 @@ import Avatar from "./chatList/Avatar";
 export default class ChatItem extends Component {
   constructor(props) {
     super(props);
+    var today = new Date(),
+
+    time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+
+   
+
+    this.state = {
+
+      currentTime: time
+
+    }
   }
   
   render() {
@@ -20,8 +31,9 @@ export default class ChatItem extends Component {
 
           <div className="chat__meta">
           
-          <span></span>
-            <span>Seen 1.03PM</span>
+          <span> { this.state.currentTime }</span>
+           
+            
           </div>
         </div>
         <Avatar isOnline="active" image={this.props.image} />

@@ -15,7 +15,7 @@ const io = new Server(server,{
 app.use(cors())
 
 const con = mysql.createConnection({
-    connectionLimit:100,
+    multipleStatements:true,
     host: 'localhost',
     user: 'root',
     password: '',
@@ -154,9 +154,10 @@ app.get('/api/user/:id',(req,res)=>
         }
     })
 })
-app.get('/api/user',(req,res)=>
+app.get('/api/getuser/:id',(req,res)=>
 {
-    sqlSearch9 = `select id,userName from tblUser`
+    const id = req.params.id 
+    sqlSearch9 = `select userName,firstName,lastName from tblUser where id!=${id} `
     con.query(sqlSearch9,function(err,result)
     {
         if(err)
@@ -171,7 +172,7 @@ app.get('/api/user',(req,res)=>
             }
             else
             {
-                res.send([])
+                res.send()
             }
         }
     })
@@ -179,9 +180,9 @@ app.get('/api/user',(req,res)=>
 app.get('/api/userInfo/:id',(req,res)=>
 {
     const id = req.params['id'];
-    const user = req.body.user;
-    const pass = req.body.pass;
-    sqlSearch4="Select tblUser.userName as User_name,tblUser.firstName as firstName,tblUser.lastName as lastName, Case when gender = 0 then 'Male' when gender = 1 then 'Female'  end AS Gender,tblUSer.isCreatedAt as Created_At,tblUSer.updateAt as Latest_Update from tblUser where id='"+id+"'"
+    //const userName = req.body.userName;
+    //const pass = req.body.pass;
+    sqlSearch4="Select tblUser.userName as userName,tblUser.firstName as firstName,tblUser.lastName as lastName, Case when gender = 0 then 'Male' when gender = 1 then 'Female'  end AS Gender,tblUSer.isCreatedAt as Created_At,tblUSer.updateAt as Latest_Update from tblUser where id='"+id+"'"
     con.query(sqlSearch4,function(err,result){
         if(err)
         {
@@ -191,7 +192,7 @@ app.get('/api/userInfo/:id',(req,res)=>
         {
             if(result.length)
             {
-                res.send(result[0]);
+                res.send(result);
             }
             else{
                 res.send("Invalid user")
@@ -317,8 +318,8 @@ app.post('/api/postMessage/:id',(req,res)=>
 app.get('/api/getMessageList/:id',(req,res)=>
 {
     const id = req.params.id;
-    sqlSearch31 =  `SELECT tg.id, tg.name, tg.profilePic, tg.updateAt, tg.createdAt, tg.isActive, tg.isDelete FROM tblgroupmember as tm INNER JOIN tblgroup as tg on tg.id = tm.groupId where userId = ${id} and tg.isActive = 1 && tg.isDelete = 0 and tm.isActive = 1 and tm.isDelete = 0`;
-    con.query(sqlSearch31,function(err,result)
+    sqlSearch3 =  `SELECT tg.id, tg.name, tg.profilePic, tg.updateAt, tg.createdAt, tg.isActive, tg.isDelete FROM tblgroupmember as tm INNER JOIN tblgroup as tg on tg.id = tm.groupId where userId = ${id} and tg.isActive = 1 && tg.isDelete = 0 and tm.isActive = 1 and tm.isDelete = 0`;
+    con.query(sqlSearch3,function(err,result)
     {
         if(err)
         {
@@ -336,11 +337,12 @@ app.get('/api/getMessageList/:id',(req,res)=>
         }
     });
 })
-app.get('/api/getMessage/:id',(req,res)=>
+
+app.get('/api/getMessage/:id',(req,res,err)=>
 {
     const id = req.params['id'];
-    sqlSearch3 = "SELECT * FROM tblMessage where messageGroupId = '"+id+"'";
-    con.query(sqlSearch3,function(err,result)
+    sqlSearch3 = `SELECT tm.id,tg.name,tm.message,tm.way,tm.updateAt, tm.createdAt, tm.isActive, tm.isDelete,tm.type FROM tblmessage as tm INNER JOIN tblgroup as tg on tg.id = tm.messageGroupId where messageGroupId=${id} and tg.isActive = 1 && tg.isDelete = 0 and tm.isActive = 1 and tm.isDelete = 0`;
+    con.query(sqlSearch3,function(err,results)
     {
         if(err)
         {
@@ -348,21 +350,20 @@ app.get('/api/getMessage/:id',(req,res)=>
         }
         else
         {
-            if(result.length!=0)
+            if(results.length)
             {
-                res.send(result);
-            }
-            else{
-                res.send([])
+                console.log(results)
+                res.send(results)
             }
         }
-    });
+    })
 })
 app.post('/api/groupDetails/:id',(req,res)=>
 {
     const id = req.params.id;
     const grpName = req.body.grpName;
     const profilePic = req.body.profilePic;
+    //const n = req.body.n;
     sqlInsert2="insert into tblGroup (name,profilePic) values (?,?) ";
     con.query(sqlInsert2,[grpName,profilePic],function(err,result)
     {
@@ -390,10 +391,30 @@ app.post('/api/groupDetails/:id',(req,res)=>
                         {
                             res.send(result);
                         }
-                        
                     }
-                }); 
-       
+                });
+                /*for(var i;i<5;i++)
+                {
+                    sqlInsert4=`insert into tblGroupMember (groupId,userId) values (${grpid},(select id from tblUser where userName='${userName}')) `;
+                    con.query(sqlInsert4,function(err,result)
+                    {
+                        if(err)
+                        {
+                            console.log("1st error:",err);
+                        }
+                        else
+                        {
+                            if(result.length)
+                            {
+                                res.send(result);
+                            }
+                            else
+                            {
+                                res.send([]);
+                            }
+                        }
+                    }); 
+                }*/
             }
         }
     });
@@ -402,6 +423,8 @@ app.post('/api/addGroupMember/:id',(req,res)=>
 {
     const grpid = req.params.id;
     const userName = req.body.userName
+    const n = req.body.n;
+    
     sqlSearch8 = `SELECT groupId from tblgroupmember JOIN tbluser on tbluser.id = tblgroupmember.userId WHERE tbluser.userName='${userName}'`;
     con.query(sqlSearch8,function(err,result)
     {
@@ -480,30 +503,7 @@ app.post('/api/updateGroupDetails/:id',(req,res)=>
         }      
     })
 })
-app.get('/api/getGroupDetail/:id',(req,res)=>
-{
-    const id = req.params['id'];
-    sqlSearch6 = "Select id,groupId,tblGroupMember.userId as GroupMember from tblGroupMember where id = '"+id+"'";
-    con.query(sqlSearch6,function(err,result)
-    {
-        if(err)
-        {
-            console.log("1st error in GroupMember api: ",err);
-        }
-        else
-        {
-            if(result.length!=0)
-            {
-                console.log(result);
-                res.send(result);
-            }
-            else
-            {
-                res.send("Invalid request")
-            }
-        }
-    });
-})
+
 
 io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);

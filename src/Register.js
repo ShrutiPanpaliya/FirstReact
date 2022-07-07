@@ -5,6 +5,7 @@ import Logo from "./asset/logo.svg.PNG";
 import { Link,useNavigate } from 'react-router-dom';
 import {axiosInstance} from './axiosInstance';
 
+
 export default function Register() {
   const navigate = useNavigate();  
   const { register, handleSubmit, formState: { errors }} = useForm();
@@ -31,16 +32,12 @@ export default function Register() {
       gender:e.gender
     };
     axiosInstance.post("/api/register",userData).then((response)=>{
-      if(!userName || !firstName || !lastName || !password || !gender   ){
-        return res.status(406).json({message:"Some fields are missing"}) ;
-        
-    }
-    else
-    {
+      
+   
       console.log(response.status);
       console.log(response.data);
       navigate('/Login');
-    }
+    
     });
   
   };

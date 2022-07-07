@@ -1,4 +1,4 @@
-import React, { useState, createRef, useEffect, useRef } from "react";
+import React, { useState, createRef, useEffect, useRef, useImperativeHandle } from "react";
 import { axiosInstance } from "../axiosInstance";
 
 import "./chatContent.css";
@@ -37,6 +37,7 @@ useEffect(() => {
   const onStateChange = () => {
     if (msg) {
     const messageData = {
+      name:selectedChat,
       room: selectedChat,
       author: localStorage.getItem('userid'),
       message: msg,
@@ -49,6 +50,7 @@ useEffect(() => {
     socket.emit("send_message", messageData);
     const data = [...chat];
     data.push({
+      name: selectedChat,
       messageGroupId: selectedChat,
       message: msg,
       way: messageData.author,
@@ -63,7 +65,7 @@ useEffect(() => {
   const [Users, setAllUsers] = useState([]);
   useEffect(() => {
     {
-    axiosInstance.get("api/user").then((response)=>{
+    axiosInstance.get("/api/user/"+localStorage.getItem('userid')).then((response)=>{
       setAllUsers(response.data)
 
     });
@@ -81,7 +83,8 @@ useEffect(() => {
               <Avatar
                 isOnline="active"
                 image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTA78Na63ws7B7EAWYgTr9BxhX_Z8oLa1nvOA&usqp=CAU"
-              /><p></p>
+              /> 
+                {localStorage.getItem('groupName')}
               <p></p>
             </div>
           </div>
@@ -96,7 +99,8 @@ useEffect(() => {
         </div>
         <div className="content__body">
           <div className="chat__items">
-            {chat.map((itm, index) => {
+            {chat.map((itm, index) =>
+            {
               return (
                 <ChatItem
                   animationDelay={index + 2}
