@@ -6,7 +6,8 @@ import UserProfile from "./userProfile/UserProfile";
 
   
    const ChatBody = () => {
-    const [selectedChat, setSelectedChat] = useState(null)
+    const grpId = localStorage.getItem('grpid');
+    const [selectedChat, setSelectedChat] = useState(grpId || null)
       return (
         <div className="main__chatbody">
           <ChatList setSelectedChat={setSelectedChat}/>

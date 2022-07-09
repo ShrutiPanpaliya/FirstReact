@@ -46,6 +46,7 @@ const ChatList = ({setSelectedChat}) => {
           {allChatUsers.map((item, index) => {
             return (
               <ChatListItems
+              {...item}
                 name={item.name}
                 key={item.id}
                 animationDelay={index + 1}
@@ -54,7 +55,7 @@ const ChatList = ({setSelectedChat}) => {
                 image={item.profilePic}
                 selectChat={() => {
                   setSelectedChat(item.id)
-                 localStorage.setItem('groupName', item.name);
+                  localStorage.setItem('groupName', item.name);
                   socket.emit("join_room", item.id);
                 }}
               />

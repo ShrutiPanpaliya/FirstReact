@@ -73,6 +73,7 @@ h1 {
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
+    
   }
   
   .form-control label {
@@ -127,7 +128,15 @@ h1 {
       flex-direction: column;
     }
   
-    .form-control input[type='text'],
+    .form-control input[type='radio']{
+      display: flex;
+      color: black;
+    }
+    .form-control text{
+      display: flex;
+      justify-content: center;
+    }
+
     .form-control input[type='password'] {
       width: inherit;
     }

@@ -16,6 +16,8 @@ function Group() {
           axiosInstance.get("/api/getuser/" + localStorage.getItem('userid')).then((response)=>{
             setAllUsers(response.data)
           });
+        } else {
+          navigate("/login")
         }  
       }
     },[])
@@ -32,16 +34,12 @@ function Group() {
      
       navigate('/ChatBody');
     };
-    const onSubmit = (data) => {
-        handleSubmit1(data);
-        console.log(data);
-      };
-      const handleSubmit1 = (e) => 
+      const onSubmit = (e) => 
       {
         const userData=
         {
             grpName: e.grpName,
-            Users: e.Users
+            users: e.users
         };
         axiosInstance.post('/api/groupDetails/'+localStorage.userid,userData).then((response)=>{
         if(response?.data){
@@ -60,9 +58,9 @@ function Group() {
         <div className="joinChatContainer">
           <h3>Join A Chat</h3>
           <label>Group Name</label>
-          <input{...register("grpName",{require: true})}/>
+          <input name="grpName" {...register("grpName",{require: true})}/>
           <div>
-            <select multiple name="Users">
+            <select multiple name="users" {...register("users")}>
                {Users.map((item,i) => {
             return(
             <option key={i} value={item.id}>{item.userName}</option>

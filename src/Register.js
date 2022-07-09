@@ -71,11 +71,44 @@ export default function Register() {
           <input type="password" {...register("password",{ required: true })} />
            {errors.userName?.type === 'required' && "password is required"}
         </div>
-        <div className="form-control">
+          <div className="form-control">
           <label>Gender</label>
           <input {...register("gender", { required: true })} />
            {errors.gender?.type === 'required' && "gender is required"}
         </div>
+        
+
+      <div className="form-control">
+        <label htmlFor="Female">
+          <input
+            {...register('gender', { required: true })}
+            type="radio"
+            name="gender"
+            value="Female"
+            
+            id="Female"
+          />
+          Female
+        </label>
+      </div>
+
+      <div className="form-control">
+        <label htmlFor="Male">
+          <input
+            {...register('gender', { required: true })}
+            type="radio"
+            name="gender"
+            value="Male"
+            
+            id="Male"
+          />
+          Male
+        </label>
+      </div>
+
+      <div className="text-danger mt-2">
+        {errors.gender?.type === 'required' && 'Value is required'}
+      </div>
 
         <div className="form-control">
           <label></label>

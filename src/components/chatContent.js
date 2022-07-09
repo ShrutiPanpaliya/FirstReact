@@ -9,6 +9,7 @@ import { socket } from "../UR";
 
 const ChatContent = ({selectedChat}) => {
   const messagesEndRef = useRef(null);
+  const messageInput = useRef(null);
   const [msg, setMSg] = useState('');
   const [chat, setchat] = useState([]);
   
@@ -33,11 +34,15 @@ useEffect(() => {
       setchat((list) => [...list, data]);
     });
   }, [socket]);
+  const logout = () => {
+    window.localStorage.clear();
+    window.location.href = "/";
+  }
 
-  const onStateChange = () => {
+  const onStateChange = (e) => {
+    e.preventDefault();
     if (msg) {
     const messageData = {
-      name:selectedChat,
       room: selectedChat,
       author: localStorage.getItem('userid'),
       message: msg,
@@ -50,7 +55,6 @@ useEffect(() => {
     socket.emit("send_message", messageData);
     const data = [...chat];
     data.push({
-      name: selectedChat,
       messageGroupId: selectedChat,
       message: msg,
       way: messageData.author,
@@ -60,6 +64,7 @@ useEffect(() => {
     <p></p>
     scrollToBottom();
     setMSg('');
+    messageInput.current.value = '';
   }
   };
   const [Users, setAllUsers] = useState([]);
@@ -91,8 +96,8 @@ useEffect(() => {
 
           <div className="blocks">
             <div className="settings">
-              <button className="btn-nobg">
-                <i className="fa fa-cog"></i>
+              <button className="btn-nobg" onClick={logout}>
+                <i className="fa fa-sign-out"></i>
               </button>
             </div>
           </div>
@@ -105,7 +110,7 @@ useEffect(() => {
                 <ChatItem
                   animationDelay={index + 2}
                   key={itm.id}
-                  user={itm.way === localStorage.getItem('userid') ? 'me' : itm.type}
+                  user={itm.way == localStorage.getItem('userid') ? 'me' : "other"}
                   msg={itm.message}
                   image={itm.image}
                   time={itm.Date}
@@ -117,19 +122,20 @@ useEffect(() => {
         </div>
       
         <div className="content__footer">
+          <form noValidate onSubmit={onStateChange} className="message-form">
           <div className="sendNewMessage">
-            <button className="addFiles">
-              <i className="fa fa-plus"></i>
-            </button>
             <input
               type="text"
               placeholder="Type a message here"
               onChange={(e) =>  setMSg(e.target.value)}
+              value={msg}
+              ref={messageInput}
             />
-            <button className="btnSendMsg" id="sendMsgBtn" onClick={onStateChange}>
+            <button className="btnSendMsg" id="sendMsgBtn" type="submit">
               <i className="fa fa-paper-plane"></i>
             </button>
           </div>
+          </form>
         </div>
       </div>
     );

@@ -46,7 +46,7 @@
   .profile__card p {
     margin-top: 10px;
     font-size: 14px;
-    color: #acb3b9;
+    color: darkred;
   }
   .profile__card .card__header {
     display: flex;

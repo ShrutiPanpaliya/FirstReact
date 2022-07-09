@@ -60,28 +60,21 @@ export default class UserProfile extends Component {
             <i className="fa fa-angle-down"></i>
           </div>
           <div className="card__content">
-          <Table>
-        <thead>
           
-          <th>userName</th>
-          <th>firstName</th>
-          <th>lastName</th>
-         
-        </thead>
-        <tbody>
+        
+        
           {users !== null &&
             users.map(user => (
               <tr key={user.id}>
-                <td>{user.userName}</td>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-               
+                <p> UserName : {user.userName}</p>
+                <p> FirstName : {user.firstName}</p>
+                <p>lastName : {user.lastName}</p>
+                <p>Gender: { user.gender}</p>
                 
                 
               </tr>
             ))}
-        </tbody>
-      </Table>
+       
             Born on 22 June 1987 ,age 35 years .South Korean actor,singer,model,creative director and businessman
           </div>
         </div>
