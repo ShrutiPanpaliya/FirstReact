@@ -147,7 +147,7 @@ app.get('/api/userInfo/:id', (req, res) => {
     const id = req.params['id'];
     const user = req.body.user;
     const pass = req.body.pass;
-    sqlSearch4 = "Select userName,firstName ,lastName , Case when gender = 0 then 'Male' when gender = 1 then 'Female'  end AS Gender,tblUSer.isCreatedAt as Created_At,tblUSer.updateAt as Latest_Update from tblUser where id='" + id + "'"
+    sqlSearch4 = "Select userName,firstName ,lastName , Case when gender = 0 then 'Male' when gender = 1 then 'Female'  end AS gender,tblUSer.isCreatedAt as Created_At,tblUSer.updateAt as Latest_Update from tblUser where id='" + id + "'"
     con.query(sqlSearch4, function (err, result) {
         if (err) {
             console.log("1st error in getUserDetails", err);
