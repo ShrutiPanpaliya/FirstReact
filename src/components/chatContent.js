@@ -114,6 +114,7 @@ useEffect(() => {
                   msg={itm.message}
                   image={itm.image}
                   time={itm.Date}
+                  name={itm.name}
                 />
               );
             })}

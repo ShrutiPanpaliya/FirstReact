@@ -274,10 +274,11 @@ app.get('/api/getMessageList/:id', (req, res) => {
     });
 })
 
-app.get('/api/getMessage/:id', (req, res, err) => {
-    const id = req.params['id'];
+
+app.get('/api/getMessageUser/:id', (req, res, err) => {
+    const messageid = req.params['id'];
     //sqlSearch3 = `SELECT tm.id,tm.message,tm.way,tm.updateAt, tm.createdAt, tm.isActive, tm.isDelete,tm.type FROM tblmessage as tm INNER JOIN tblgroup as tg on tg.id = tm.messageGroupId where messageGroupId=${id} and tg.isActive = 1 && tg.isDelete = 0 and tm.isActive = 1 and tm.isDelete = 0`;
-    sqlSearch3 = `SELECT * FROM tblMessage where messageGroupId =${id}`
+    sqlSearch3 = `SELECT userName from tblUser where(tblUser.id = (SELECT tblmessage.way from tblmessage where tnlmessage.id=${messageid}))`
     con.query(sqlSearch3, function (err, result) {
         if (err) {
             console.log("1st error in getMessageId api: ", err);

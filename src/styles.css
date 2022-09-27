@@ -16,9 +16,9 @@ body {
 
 input {
   background-color: transparent;
-  padding: 1rem;
+  padding: 0.5rem;
   border: 0.1rem solid #4e0eff;
-  border-radius: 0.4rem;
+  border-radius: 0.2rem;
   color: black;
   width: 100%;
   font-size: 1rem;
@@ -43,9 +43,9 @@ h1 {
 .brand {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   justify-content: center;
-  height: 50px;
+  height: 25px;
   
 }
 .title {
@@ -79,14 +79,15 @@ h1 {
   .form-control label {
     width: 20%;
     padding-right: 20px;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
+    display: inline;
   }
   form {
     display: flex;
     flex-direction: column;
     background-color: grey;
     border-radius: 2rem;
-    padding: 3rem 5rem;
+    padding: 2rem 5rem;
   }
   span {
     color: black;
@@ -129,8 +130,15 @@ h1 {
     }
   
     .form-control input[type='radio']{
-      display: flex;
+      display: inline;
       color: black;
+      width: auto;
+    }
+    .form-control input[type='radio']label{
+      float: left;
+      display: initial;
+      position: relative;
+
     }
     .form-control text{
       display: flex;
@@ -138,6 +146,6 @@ h1 {
     }
 
     .form-control input[type='password'] {
-      width: inherit;
+      width: auto;
     }
   }

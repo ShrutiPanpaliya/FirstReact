@@ -4,15 +4,16 @@ body {
   justify-content: center;
   align-items: center;
 }
-.title {
+/*.title {
   text-align: center;
-  width: 30vw;
+  width: fit-content;
+  
   background-color: rgb(190, 164, 214);
   padding: 2vw 1vw;
   border-radius: 10px 10px 0 0;
   font-size: 2rem;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-}
+}*/
 
 .App {
   text-align: center;

@@ -38,7 +38,7 @@ export default class UserProfile extends Component {
       <div className="main__userprofile">
         <div className="profile__card user__profile__image">
           <div className="profile__image">
-            <img src= "https://upload.wikimedia.org/wikipedia/commons/8/81/Lee_Min-ho_-_KCON_2016_%28cropped%29.jpg" />
+          <i class="fa fa-user" aria-hidden="true"></i>
           </div>
           {users !== null &&
             users.map(user => (
@@ -75,7 +75,7 @@ export default class UserProfile extends Component {
               </tr>
             ))}
        
-            Born on 22 June 1987 ,age 35 years .South Korean actor,singer,model,creative director and businessman
+           
           </div>
         </div>
       </div>

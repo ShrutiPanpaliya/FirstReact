@@ -56,6 +56,7 @@ const ChatList = ({setSelectedChat}) => {
                 selectChat={() => {
                   setSelectedChat(item.id)
                   localStorage.setItem('groupName', item.name);
+                  localStorage.setItem('key',item.id);
                   socket.emit("join_room", item.id);
                 }}
               />

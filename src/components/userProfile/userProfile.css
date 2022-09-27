@@ -30,10 +30,10 @@
   .profile__card.user__profile__image {
     padding: 20px 20px;
   }
-  .profile__card .profile__image {
+  .profile__card .profile__image .i {
     width: 100px;
     height: 100px;
-    border-radius: 50%;
+    border-radius: 100%;
     overflow: hidden;
   }
   .profile__card .profile__image img {
